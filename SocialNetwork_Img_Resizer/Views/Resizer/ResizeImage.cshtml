@@ -1,0 +1,374 @@
+﻿@model SocialNetwork_Img_Resizer.Models.UploadedIMGViewModel
+@{
+    ViewBag.Title = "ResizeImage";
+}
+
+<h2>Resize IT</h2>
+@using(Ajax.BeginForm("ResizeImage",new AjaxOptions() { }))
+{
+            
+    @Html.HiddenFor(m=>Model.IMG_Name)
+    @Html.HiddenFor(m=>Model.IMG_Path)
+    
+    <div class="social_resize">
+    <div class="bg-dark row">
+
+    </div>		<!--progress-->
+
+    <div class="bg-info row pt-3">
+
+        <div class="col-xs-3 mt-5">
+            <img id="img_uploaded_thumbnail" src="~/Files_Repo/@Model.IMG_Name" height="200px" width="260px" alt="thumbnail image of @Model.IMG_Name" />
+            <span class="">@Model.IMG_Name</span>
+
+        </div>		<!--Image thumbnail-->
+
+
+
+
+        <div class="col-xs-8 mt-5">
+            <h2 name="header_socialNetwork">Choisissez vos réseaux sociaux</h2>
+            @{
+                int count = 0;
+                string cssClasses = "";
+            }
+            @for (int k = 0; k < Model.CompatibleNetworks.Count; k++)
+            {
+                @Html.HiddenFor(m => Model.CompatibleNetworks[k].Id)
+                @Html.HiddenFor(m => Model.CompatibleNetworks[k].Name)
+
+                if (count > 0 && count < 2)
+                { cssClasses = "ml-4"; }
+                <div class="col-xs-2 @cssClasses" name="social_checkbox">
+                    <label class="checkbox text-center">
+                        @*<input type="checkbox" name="@nameof(item.IsSelected)" id="@item.Name" class="" autocomplete="off">*@
+                        @Html.CheckBoxFor(m => Model.CompatibleNetworks[k].IsSelected, new { @class = Model.CompatibleNetworks[k].Name })<i class="@Model.CompatibleNetworks[k].IconFa fa-3x"></i>
+
+                    </label>
+                    <small>
+                        <span class="">@Model.CompatibleNetworks[k].IMG_Profile_Specs.Count</span>
+                        <span>sizes</span>
+                    </small>
+                </div>
+                <!--for each social_network the profile selection divs-->
+                <h3 name="header_profile" data-attr="@Model.CompatibleNetworks[k].Name">Choisir les profils d'images @Model.CompatibleNetworks[k].Name</h3>
+                for (int i = 0; i < Model.CompatibleNetworks[k].IMG_Profile_Specs.Count; i++)
+                {
+                    @Html.HiddenFor(m => Model.CompatibleNetworks[k].IMG_Profile_Specs[i].Id)
+                    @Html.HiddenFor(m => Model.CompatibleNetworks[k].IMG_Profile_Specs[i].ProfileName)
+                    @Html.HiddenFor(m => Model.CompatibleNetworks[k].IMG_Profile_Specs[i].Width)
+                    @Html.HiddenFor(m => Model.CompatibleNetworks[k].IMG_Profile_Specs[i].Height)
+
+
+                    if (i == 0)
+                    {
+                        <div class="col-xs-2 ml-4" name="@Model.CompatibleNetworks[k].Name-profile" data-attr="profiles">
+                            <label class="checkbox text-center">
+                                @Html.CheckBoxFor(m => Model.CompatibleNetworks[k].IMG_Profile_Specs[i].IsSelected, new { id = Model.CompatibleNetworks[k].Name, @class = "", htmlAttributes = Model.CompatibleNetworks[k].Name })
+                                <img class="img-circle" />
+                                @*<input type="checkbox" name="@nameof(item.IMG_Profile_Specs[i].IsSelected)" id="@item.Name" value="val1" class="" autocomplete="off"><img class="img-circle"/>*@
+
+                            </label>
+                            <small>
+                                <span class="">@Model.CompatibleNetworks[k].IMG_Profile_Specs[i].ProfileName</span>
+                            </small>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-xs-2" name="@Model.CompatibleNetworks[k].Name-profile" data-attr="profiles">
+                            <label class="checkbox text-center">
+                                @Html.CheckBoxFor(m => Model.CompatibleNetworks[k].IMG_Profile_Specs[i].IsSelected, new { id = Model.CompatibleNetworks[k].Name, @class = "",
+                               htmlAttributes = Model.CompatibleNetworks[k].Name @*autocomplete = "off"*@})
+                                <img class="img-circle" />
+                                @*<input type="checkbox" name="@nameof(item.IMG_Profile_Specs[i].IsSelected)" id="@item.Name" value="val1" class="" autocomplete="off"><img class="img-circle"/>*@
+
+                            </label>
+                            <small>
+                                <span class="">@Model.CompatibleNetworks[k].IMG_Profile_Specs[i].ProfileName</span>
+                            </small>
+                        </div>
+                    }
+
+                }
+
+                count++;
+            }
+
+
+
+        </div>			<!--network selection-->
+
+    </div>
+
+    <div class="bg-primary row">
+        <div class="pull-right m-2">
+            @*<a class="btn btn-default" id="Btn_Return">Retour</a>*@
+            @Html.ActionLink("Retour", "Index", "Resizer", null, new { @class = "btn btn-default", id = "Btn_Return" })
+            <a class="btn btn-success ml-3 mr-5" href="#" id="Btn_Next" disabled="disabled">Suivant</a>
+            <a class="btn btn-default" href="#" id="Network_Prev" data-network-active="">Back</a>
+            <a class="btn btn-success ml-3 mr-5" href="#" id="Network_Next" data-network-active="">Next</a>
+        </div>
+    </div>			<!--action-->
+
+</div>
+
+<input type="submit" id="submit_Btn" style="visibility:hidden"/>
+
+}
+
+
+@section scripts{
+
+<script type="text/javascript">
+
+    
+
+    
+
+</script>
+
+
+<script type="text/javascript">
+    let checkedBoxes=new Array();
+    let NetworksCompleted = 0;
+    $(document).ready(function () {
+        //at first just the social header is seen
+        $('[name="header_profile"]').hide();
+
+        $('#Network_Prev').hide();
+        $('#Network_Next').hide();
+        $('#Network_Next').attr('disabled', 'disabled');
+        //functions
+        function HideAllProfiles(keyAttr) {
+            $("[data-attr='" + keyAttr + "']").hide();
+        };
+
+        function ShowProfilesWithName(nameProfile) {
+            $("[name='" + nameProfile + "']").show();
+        };
+
+        function ResetProfileActionButtons(idNext, idPrev, networkActive) {
+            $("#" + idNext).attr('disabled', 'disabled');
+            $("#" + idNext).show();
+            $("#" + idPrev).show();
+            $("#" + idNext).attr('data-network-active', networkActive);
+            $("#" + idPrev).attr('data-network-active', networkActive);
+            //toggle active or not
+            ToggleProfileActionBtn(networkActive);
+
+            //change header
+            $('[name="header_profile"]').hide();    //hide all
+            $("[data-attr='"+networkActive+"']").show();    //show the one concerned
+            
+            //change profile action button name
+            console.log("CHECKED BOXES BEFORE DOWNLOAD");
+            if ($('#Network_Next').text() === "Download") {
+                if (NetworksCompleted !== checkedBoxes.length - 1) {
+                    $('#Network_Next').text("Next");
+                }
+            }
+            else {
+                if (NetworksCompleted === checkedBoxes.length - 1) {
+                    $('#Network_Next').text("Download");
+                    console.log("CHANGE TEXT");
+                }
+            }
+            
+
+            
+
+        };
+
+
+        let SwapProfileSelection = function (checkBoxes, countNetworksCompleted, ProfileSelector) {
+            //console.log(checkBoxes);
+            //console.log(countNetworksCompleted);
+            //console.log(checkBoxes.length);
+            let val = checkBoxes;
+            let numberLength = checkBoxes.length;
+            console.log(val);
+            console.log(val.length);
+            console.log(checkBoxes.length >= countNetworksCompleted);
+            if (checkBoxes.length > 0 && parseInt(numberLength) >= parseInt(countNetworksCompleted)) {
+                //console.log(parseInt(numberLength));
+                //console.log(parseInt(countNetworksCompleted));
+                //console.log(parseInt(numberLength) >= parseInt(countNetworksCompleted));
+                //if ( ) {
+                //    console.log("SECOND IF Called");
+                //}
+                //console.log("IF Called");
+                HideAllProfiles(ProfileSelector);
+                let networkName = $(checkBoxes[countNetworksCompleted]).attr('class');
+                console.log(networkName);
+                ShowProfilesWithName(networkName + "-profile");
+                ResetProfileActionButtons("Network_Next", "Network_Prev", networkName);
+            }
+            else {
+                console.log("ELSE Called");
+            }
+           
+        };
+
+
+        //branch on social network selection 
+
+        //hide all profile checkboxes
+        HideAllProfiles("profiles");
+
+        $('[name="social_checkbox"]  input[type="checkbox"]').on('change', function () {
+            //change next button if no input is checked
+            //console.log(this);
+            //look if there is any social network checked
+            checkedBoxes = $('[name="social_checkbox"] input:checked').toArray();
+            //console.log(checkedBoxes);  
+            if (checkedBoxes !== null) {
+
+                if (checkedBoxes.length > 0) {
+                    $('#Btn_Next').removeAttr('disabled');
+                    //ceate and append buttons for each
+                }
+                else {
+                    $('#Btn_Next').attr('disabled', 'disabled');
+                }
+
+            }
+            //console.log($(this)+ " is Checked");
+        });
+
+
+        $('#Btn_Next').on('click', function () {
+            //hide social network selection
+            $('[name="social_checkbox"]').hide();
+            $('[name="header_socialNetwork"]').hide();      //header
+
+            //show profiles 
+            console.log(checkedBoxes);
+            console.log(NetworksCompleted);
+            $('#Btn_Return').hide();
+            $(this).hide();
+            SwapProfileSelection(checkedBoxes, NetworksCompleted, "profiles");
+            
+        });
+
+
+        $('#Network_Prev').on('click', function () {
+            if (NetworksCompleted === 0) {
+                //present network selection and hide all profiles
+                HideAllProfiles("profiles");
+                $('[name="social_checkbox"]').show();
+                //hide profile action  buttons
+                $(this).hide();
+                $('#Network_Next').hide();
+
+                //headers
+                
+                $('[name="header_profile"]').hide(); 
+                $('[name="header_socialNetwork"]').show(); 
+
+                //show previous network selection's linked button
+                $('#Btn_Return').show();
+                $('#Btn_Next').show();
+                ToggleNetworkProfiles();
+                
+            }
+            else {
+                NetworksCompleted--;
+                SwapProfileSelection(checkedBoxes, NetworksCompleted, "profiles");
+            }
+        });
+
+
+        $('#Network_Next').on('click', function () {
+            console.log(checkedBoxes.length);
+            console.log(NetworksCompleted);
+            if (NetworksCompleted === checkedBoxes.length-1) {
+                //send request for resized images
+                console.log("SEND DATA");
+                $('#submit_Btn').click();
+                //alert("SENDING DATA");
+            }
+            else {
+                //add the number of completed networks 
+                NetworksCompleted = NetworksCompleted + 1;
+                SwapProfileSelection(checkedBoxes, NetworksCompleted, "profiles");
+            }
+        });
+
+
+        $('[data-attr="profiles"] input[type="checkbox"]').on('change', function () {
+            let val = $(this).attr('htmlAttributes');
+            console.log(val);
+
+            //check if the action buttons are branched to the network in val
+            let val_button_next = $('#Network_Next').attr('data-network-active');
+            console.log(val_button_next);
+            if (val === val_button_next) {
+                ToggleProfileActionBtn(val);
+                //let checkedProfiles = $("[data-attr='profiles'] input:checked").filter("[htmlAttributes='" + val + "']");
+                //console.log(checkedProfiles);
+                //if (checkedProfiles !== null) {
+                //    if (checkedProfiles.length > 0) {
+                //        $('#Network_Next').removeAttr('disabled');
+                //    }
+                //    else {
+                //        $('#Network_Next').attr('disabled','disabled');
+                //    }
+                //}
+            }
+        });
+    });
+
+    function ToggleProfileActionBtn(val) {
+        let checkedProfiles = $("[data-attr='profiles'] input:checked").filter("[htmlAttributes='" + val + "']");
+        console.log(checkedProfiles);
+        if (checkedProfiles !== null) {
+            if (checkedProfiles.length > 0) {
+                $('#Network_Next').removeAttr('disabled');
+            }
+            else {
+                $('#Network_Next').attr('disabled', 'disabled');
+            }
+        }
+    }
+    function ToggleNetworkProfiles() {
+        let checkBoxes = $('[name="social_checkbox"] input:checked').toArray();
+        //console.log(checkedBoxes);  
+        if (checkBoxes !== null) {
+
+            if (checkBoxes.length > 0) {
+                $('#Btn_Next').removeAttr('disabled');
+                //ceate and append buttons for each
+            }
+            else {
+                $('#Btn_Next').attr('disabled', 'disabled');
+            }
+
+        }
+    }
+
+
+    
+</script>    
+}
+
+
+
+@*<div class="col-xs-2">
+        <input type="checkbox" name="" value="" class="checkbox" />
+        <label class="label">
+            <span class=""><i class="fa fa-twitter fa-3x"></i></span>
+        </label>
+        <span>
+            <span class="lead">4</span>
+            <span>sizes</span>
+        </span>
+    </div>		networks list
+
+        <div class="col-xs-2">
+                    <label class="checkbox text-center">
+                        <input type="checkbox" name="chk1" id="item4" value="val1" class="" autocomplete="off"><i class="fa fa-facebook-square fa-3x"></i>
+
+                    </label>
+                </div>
+*@

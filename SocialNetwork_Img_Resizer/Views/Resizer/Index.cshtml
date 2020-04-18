@@ -1,0 +1,187 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+@using (Ajax.BeginForm("UploadFile", "Resizer", new AjaxOptions() { HttpMethod = "POST", LoadingElementDuration = 500, LoadingElementId = "loader" }, new { enctype = "multipart/form-data" }))
+{
+
+
+<div class="progress mt-5" id="loader">
+    <div class="progress-bar" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="500" style="min-width: 2em; width:10%">
+        0%
+    </div>
+    
+</div>
+<div><span id="size" class="pull-right mr-3 mt-3">size</span></div>
+    <div class="hidden ">
+        <input id="img_input" name="file" type="file" />
+        <input id="submit_Btn" type="submit" />
+    </div>
+
+    
+    <div class="jumbotron uploader mt-5 text-center" id="dragandrophandler">
+
+        <h1 class="text-capitalize">Téléversez une photo</h1>
+        <p class="lead">Rédimensionnez votre photo pour les réseaux sociaux.</p>
+        @*<p><a href="@Url.Action("About","Resizer")" class="btn btn-primary btn-lg">Plus de détails &raquo;</a></p>*@
+
+    </div>
+
+
+}
+
+@*<div class="row">
+        <div class="col-md-4">
+            <h2>Getting started</h2>
+            <p>
+                ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
+                enables a clean separation of concerns and gives you full control over markup
+                for enjoyable, agile development.
+            </p>
+            <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+        </div>
+        <div class="col-md-4">
+            <h2>Get more libraries</h2>
+            <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
+            <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
+        </div>
+        <div class="col-md-4">
+            <h2>Web Hosting</h2>
+            <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
+            <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+        </div>
+    </div>*@
+
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#loader').hide();
+        });
+
+
+
+    var obj = $("#dragandrophandler");
+    obj.on('dragenter', function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+        $(this).css('border', '2px solid #0B85A1');
+    });
+    obj.on('dragover', function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+    });
+    obj.on('drop', function (e) {
+
+        $(this).css('border', '2px dotted #0B85A1');
+        e.preventDefault();
+        var files = e.originalEvent.dataTransfer.files;
+        console.log("file dropped !");
+        console.log(files);
+
+        //put the first file as the input file
+        $('#img_input').prop('files',files)
+        //We need to send dropped files to Server
+        //handleFileUpload(files, obj);
+        TriggerFileUpload();
+    });
+    obj.on('click', function (e) {
+        console.log("image clicked");
+        e.preventDefault();
+        $('#img_input').click();
+        // function(e){
+        // 	console.log(e);
+        // var file=e.originalEvent.dataTransfer.files;
+        // console.log(file);
+        // window.location.href="social_network_resizer";
+        // });
+        //open()
+    });
+
+    $('#img_input').on('change', function () {
+
+        console.log($(this));
+        var files = $(this).prop('files');
+        console.log(files);
+
+        TriggerFileUpload();
+        //upload the file
+        //handleFileUpload(files, $(this))
+    });
+        let interval = null;
+
+        function TriggerFileUpload() {
+            console.log("loading start...");
+
+            //check if the file size is less than the limit acceptable
+            let files = $('#img_input').prop('files');
+            console.log(files);
+            if (files.length > 0) {
+                let fileSize = files[0].size;
+                console.log(fileSize);
+                const file = Math.round((fileSize / 1024));
+                console.log(file);
+                // The size of the file.
+                if (file >= 4096) {
+                    alert(
+                        "File too Big, please select a file less than 4mb");
+                }
+                $('#size').html('<b>'
+                        + file + '</b> KB');
+
+            }
+
+            console.log($('#loader'));
+            $('#loader').show();
+            $('#loader').addClass('active');
+
+            //$(".progress-bar").animate({
+            //    width: "100%", text:"100%"
+            //}, 2500);
+            var w = 0;
+            interval=setInterval(function () {
+                w = w % 100 + Math.floor(Math.random() * 25);
+
+                $('.progress-bar').width(w + '%').text(w + '%');
+                if (w >= 100) {
+                    clearInterval(interval);
+                    $('#submit_Btn').click(); 
+                }
+            }, 800);
+
+            //setTimeout(function () {
+
+                             
+                
+                
+
+            //}, 1500);
+        }
+        
+
+    function handleFileUpload(files, obj) {
+        //send the file selected to server
+        //progression bar
+        @*let data = new FormData();
+        //console.log(files);
+        //console.log("posting to server");
+        data.append("file",files[0]);
+        $.ajax({
+            url: '@Url.Action("UploadFile","Resizer")',
+            method: "POST",
+            data: data,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (xhr) {
+                //console.log(xhr);
+
+                setTimeout(function () {
+                    window.location.href = xhr;
+                }, 1000)
+                //swap views
+            }
+
+        });*@
+    }
+    </script>
+}

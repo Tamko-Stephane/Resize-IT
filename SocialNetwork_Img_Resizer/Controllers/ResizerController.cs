@@ -83,6 +83,7 @@ namespace SocialNetwork_Img_Resizer.Controllers
             }
             catch (Exception e)
             {
+                TempData["Error"] = e.Message;
                 ViewBag.Error = e.Message;
                 throw e;
             }
@@ -108,6 +109,7 @@ namespace SocialNetwork_Img_Resizer.Controllers
             }
             catch (Exception e)
             {
+                TempData["Error"] = e.Message;
                 ViewBag.Error = e.Message;
                 throw e;
             }

@@ -3,6 +3,7 @@ using SharpCompress.Archives.Zip;
 using SharpCompress.Common;
 using SocialNetwork_Img_Resizer.Helpers;
 using SocialNetwork_Img_Resizer.Models;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -64,36 +65,54 @@ namespace SocialNetwork_Img_Resizer.Controllers
         [HttpPost]
         public ActionResult UploadFile(HttpPostedFileBase file)
         {
-            string directory = Server.MapPath("~/Files_Repo/");//@"C:\Temp\";
-
-            //HttpPostedFileBase file = Request.Files["file"];
-
-            if (file != null && file.ContentLength > 0)
+            try
             {
-                var fileName = Path.GetFileName(file.FileName);
+                string directory = Server.MapPath("~/Files_Repo/");//@"C:\Temp\";
 
-                file.SaveAs(Path.Combine(directory, fileName));
-                return RedirectToAction("ResizeImage");
+                //HttpPostedFileBase file = Request.Files["file"];
+
+                if (file != null && file.ContentLength > 0)
+                {
+                    var fileName = Path.GetFileName(file.FileName);
+
+                    file.SaveAs(Path.Combine(directory, fileName));
+                    return RedirectToAction("ResizeImage");
+                }
+                //return status 
+                return Json(file.FileName);
             }
-            //return status 
-            return Json(file.FileName);
+            catch (Exception e)
+            {
+                ViewBag.Error = e.Message;
+                throw e;
+            }
 
         }
 
         public async Task<ActionResult> ResizeImage()
         {
             //Get infos about the image and social networks to present
-            var directory = new DirectoryInfo(Server.MapPath("~/Files_Repo/"));
-            var myFile = directory.GetFiles()
-                .OrderByDescending(f => f.LastWriteTime)
-                .First();
-            UploadedIMGViewModel model = new UploadedIMGViewModel();
-            model.IMG_Name = myFile.Name;
-            model.IMG_Path = myFile.FullName;
+            try
+            {
+                var directory = new DirectoryInfo(Server.MapPath("~/Files_Repo/"));
+                var myFile = directory.GetFiles()
+                    .OrderByDescending(f => f.LastWriteTime)
+                    .First();
+                UploadedIMGViewModel model = new UploadedIMGViewModel();
+                model.IMG_Name = myFile.Name;
+                model.IMG_Path = myFile.FullName;
 
-            model.CompatibleNetworks = await ConvertToVM(await _context.GetSocialNetworksCompatibleWithFile(myFile));
 
-            return View(model);
+                model.CompatibleNetworks = await ConvertToVM(await _context.GetSocialNetworksCompatibleWithFile(myFile));
+                return View(model);
+            }
+            catch (Exception e)
+            {
+                ViewBag.Error = e.Message;
+                throw e;
+            }
+
+
         }
 
         [HttpPost]

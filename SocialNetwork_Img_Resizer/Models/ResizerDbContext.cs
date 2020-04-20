@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
 using System.Threading.Tasks;
@@ -19,14 +20,23 @@ namespace SocialNetwork_Img_Resizer.Models
         {
             if (fileInfo != null)
             {
-                var attr = fileInfo.Attributes;
-                Dictionary<Social_Network, List<Network_Image_Spec>> dictionnary = new Dictionary<Social_Network, List<Network_Image_Spec>>();
-                var networks = await this.Social_Networks.ToListAsync();
-                foreach (var n in networks)
+                try
                 {
-                    dictionnary.Add(n, await GetSocialNetworkProfiles(n));
+                    var attr = fileInfo.Attributes;
+                    Dictionary<Social_Network, List<Network_Image_Spec>> dictionnary = new Dictionary<Social_Network, List<Network_Image_Spec>>();
+                    var networks = await this.Social_Networks.ToListAsync();
+                    foreach (var n in networks)
+                    {
+                        dictionnary.Add(n, await GetSocialNetworkProfiles(n));
+                    }
+                    return dictionnary;
                 }
-                return dictionnary;
+                catch (Exception e)
+                {
+
+                    throw e;
+                }
+
             }
             return null;
         }

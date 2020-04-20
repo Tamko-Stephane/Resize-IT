@@ -7,7 +7,7 @@
 
 
 <div class="progress mt-5" id="loader">
-    <div class="progress-bar" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="500" style="min-width: 2em; width:10%">
+    <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="500" style="min-width: 2em; width:0%">
         0%
     </div>
     
@@ -138,13 +138,20 @@
             //    width: "100%", text:"100%"
             //}, 2500);
             var w = 0;
+            var isclicked = false;
             interval=setInterval(function () {
                 w = w % 100 + Math.floor(Math.random() * 25);
-
-                $('.progress-bar').width(w + '%').text(w + '%');
+                if (w < 100) {
+                    if (w >= 75 && !isclicked) {
+                        $('#submit_Btn').click();
+                        isclicked = true;
+                    }
+                    $('.progress-bar').width(w + '%').text(w + '%');
+                }
+                
+                
                 if (w >= 100) {
                     clearInterval(interval);
-                    $('#submit_Btn').click(); 
                 }
             }, 800);
 

@@ -37,6 +37,7 @@ namespace SocialNetwork_Img_Resizer.Models
         [HiddenInput]
         public int Width { get; set; }
         public bool IsSelected { get; set; }
+        public string ImgCDNSrc { get; set; }
 
         [HiddenInput]
         public string ProfileName { get; set; }

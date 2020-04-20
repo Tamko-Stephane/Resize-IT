@@ -171,7 +171,8 @@ namespace SocialNetwork_Img_Resizer.Controllers
                             {
                                 Height = i.Height,
                                 Width = i.Width,
-                                ProfileName = i.ProfileName
+                                ProfileName = i.ProfileName,
+                                ImgCDNSrc = string.IsNullOrEmpty(i.ImageCDNSrc) ? "#" : i.ImageCDNSrc
                             }).ToList()
                         }).ToList();
                     }

@@ -10,7 +10,7 @@ namespace SocialNetwork_Img_Resizer.Models
         public DbSet<Social_Network> Social_Networks { get; set; }
         public DbSet<Network_Image_Spec> Network_Image_Specs { get; set; }
 
-        public ResizerDbContext() : base("Default")
+        public ResizerDbContext() : base("db5375457768354c28a4ceaba101160fd9")
         {
 
         }

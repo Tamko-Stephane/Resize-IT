@@ -3,6 +3,7 @@
     public class Network_Image_Spec
     {
         public int Id { get; set; }
+        public string ImageCDNSrc { get; set; }
         public string ProfileName { get; set; }
         public int Height { get; set; }
         public int Width { get; set; }

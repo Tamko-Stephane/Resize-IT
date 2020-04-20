@@ -15,7 +15,7 @@
 
     </div>		<!--progress-->
 
-    <div class="bg-info row pt-3">
+    <div class="bg-success row pt-3">
 
         <div class="col-xs-3 mt-5">
             <img id="img_uploaded_thumbnail" src="~/Files_Repo/@Model.IMG_Name" height="200px" width="260px" alt="thumbnail image of @Model.IMG_Name" />
@@ -26,7 +26,7 @@
 
 
 
-        <div class="col-xs-8 mt-5">
+        <div class="col-xs-8">
             <h2 name="header_socialNetwork">Choisissez vos réseaux sociaux</h2>
             @{
                 int count = 0;
@@ -62,10 +62,15 @@
 
                     if (i == 0)
                     {
-                        <div class="col-xs-2 ml-4" name="@Model.CompatibleNetworks[k].Name-profile" data-attr="profiles">
+                        <div class="col-xs-2 ml-4 text-center" name="@Model.CompatibleNetworks[k].Name-profile" data-attr="profiles">
                             <label class="checkbox text-center">
+
+                                @*<span class="m-0 bg-danger">
+
+        </span>*@
                                 @Html.CheckBoxFor(m => Model.CompatibleNetworks[k].IMG_Profile_Specs[i].IsSelected, new { id = Model.CompatibleNetworks[k].Name, @class = "", htmlAttributes = Model.CompatibleNetworks[k].Name })
-                                <img class="img-circle" />
+
+                                <img class="m-1" style="border:2px solid #808080; background:#ffffff" src="@Model.CompatibleNetworks[k].IMG_Profile_Specs[i].ImgCDNSrc" alt="image representing @Model.CompatibleNetworks[k].IMG_Profile_Specs[i].ProfileName" />
                                 @*<input type="checkbox" name="@nameof(item.IMG_Profile_Specs[i].IsSelected)" id="@item.Name" value="val1" class="" autocomplete="off"><img class="img-circle"/>*@
 
                             </label>
@@ -76,11 +81,16 @@
                     }
                     else
                     {
-                        <div class="col-xs-2" name="@Model.CompatibleNetworks[k].Name-profile" data-attr="profiles">
+                        <div class="col-xs-2 text-center" name="@Model.CompatibleNetworks[k].Name-profile" data-attr="profiles">
                             <label class="checkbox text-center">
+
+                                @*<span class="row ">
+
+                                </span>*@
                                 @Html.CheckBoxFor(m => Model.CompatibleNetworks[k].IMG_Profile_Specs[i].IsSelected, new { id = Model.CompatibleNetworks[k].Name, @class = "",
                                htmlAttributes = Model.CompatibleNetworks[k].Name @*autocomplete = "off"*@})
-                                <img class="img-circle" />
+                                <img class="m-1" style="border:2px solid #808080; background:#ffffff" src="@Model.CompatibleNetworks[k].IMG_Profile_Specs[i].ImgCDNSrc" alt="image representing @Model.CompatibleNetworks[k].IMG_Profile_Specs[i].ProfileName" />
+
                                 @*<input type="checkbox" name="@nameof(item.IMG_Profile_Specs[i].IsSelected)" id="@item.Name" value="val1" class="" autocomplete="off"><img class="img-circle"/>*@
 
                             </label>

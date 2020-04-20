@@ -167,6 +167,10 @@
     <Compile Include="Migrations\202004171223484_SEED_Network_Image_Spec.designer.cs">
       <DependentUpon>202004171223484_SEED_Network_Image_Spec.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202004200844053_Network_Image_Spec_ImageCDNSrc.cs" />
+    <Compile Include="Migrations\202004200844053_Network_Image_Spec_ImageCDNSrc.designer.cs">
+      <DependentUpon>202004200844053_Network_Image_Spec_ImageCDNSrc.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Network_Image_Spec.cs" />
     <Compile Include="Models\ResizerDbContext.cs" />
@@ -251,6 +255,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202004171223484_SEED_Network_Image_Spec.resx">
       <DependentUpon>202004171223484_SEED_Network_Image_Spec.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004200844053_Network_Image_Spec_ImageCDNSrc.resx">
+      <DependentUpon>202004200844053_Network_Image_Spec_ImageCDNSrc.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

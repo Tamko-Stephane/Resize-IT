@@ -9,6 +9,9 @@ namespace SocialNetwork_Img_Resizer.Models
         public string IMG_Name { get; set; }
         [HiddenInput]
         public string IMG_Path { get; set; }
+        public string IMG_ContentType { get; set; }
+        [HiddenInput]
+        public string IMG_Guid { get; set; }
         public List<Social_Network_VM> CompatibleNetworks { get; set; }
         public UploadedIMGViewModel()
         {

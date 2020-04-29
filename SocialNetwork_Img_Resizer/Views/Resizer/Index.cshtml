@@ -111,7 +111,15 @@
 
         function TriggerFileUpload() {
             console.log("loading start...");
-
+            //hide upload div
+            $('#loader').parent().append("<div class='row mt-5'>Loading...</div>");
+            $('#dragandrophandler').hide('fast');
+            
+            //make progress bar center
+            $('#loader').height(48);
+            
+            $('#loader').offset({ 'top': '50', 'left': '50' });
+            
             //check if the file size is less than the limit acceptable
             let files = $('#img_input').prop('files');
             console.log(files);

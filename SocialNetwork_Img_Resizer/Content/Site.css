@@ -49,6 +49,7 @@ textarea {
 .mt-5{
     margin-top: 30px;
 }
+
 .pt-1 {
     padding-top: 5px;
 }
@@ -113,4 +114,9 @@ textarea {
 .progress.active .progress-bar {
     -webkit-transition: none !important;
     transition: none !important;
+}
+#img_uploaded_thumbnail{
+    width:100%;
+    display:block;
+    height:60%;
 }

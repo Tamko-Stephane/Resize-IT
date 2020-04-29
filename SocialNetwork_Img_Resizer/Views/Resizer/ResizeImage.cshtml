@@ -4,11 +4,12 @@
 }
 
 <h2>Resize IT</h2>
-@using(Ajax.BeginForm("ResizeImage",new AjaxOptions() { }))
+@using(Ajax.BeginForm("ResizeImage",new AjaxOptions() { OnComplete= "OnCompleteResize()",OnSuccess= "OnCompleteResize", OnBegin= "OnCompleteResize()" }))
 {
-            
+
     @Html.HiddenFor(m=>Model.IMG_Name)
-    @Html.HiddenFor(m=>Model.IMG_Path)
+    @Html.HiddenFor(m=>Model.IMG_Guid)
+    
     
     <div class="social_resize">
     <div class="bg-dark row">
@@ -17,16 +18,17 @@
 
     <div class="bg-success row pt-3">
 
-        <div class="col-xs-3 mt-5">
-            <img id="img_uploaded_thumbnail" src="~/Files_Repo/@Model.IMG_Name" height="200px" width="260px" alt="thumbnail image of @Model.IMG_Name" />
-            <span class="">@Model.IMG_Name</span>
+        <div class="col-xs-12 col-lg-4 mt-5">
+            @*<img id="img_uploaded_thumbnail" src="~/Files_Repo/@Model.IMG_Name" height="200px" width="260px" alt="thumbnail image of @Model.IMG_Name" />*@
+            <img id="img_uploaded_thumbnail" src="@Url.Action("ShowImage","Resizer",new { id=Model.IMG_Guid})"  alt="thumbnail image of @Model.IMG_Name" />
+            <div class="m-2 text-center">@Model.IMG_Name</div>
 
         </div>		<!--Image thumbnail-->
 
 
 
 
-        <div class="col-xs-8">
+        <div class="col-xs-12 col-lg-7">
             <h2 name="header_socialNetwork">Choisissez vos réseaux sociaux</h2>
             @{
                 int count = 0;
@@ -125,15 +127,47 @@
 
 <input type="submit" id="submit_Btn" style="visibility:hidden"/>
 
+<div class="bg-info modal fade" tabindex="-1" role="dialog"  aria-labelledby="submit_Btn" aria-hidden="true" id="successModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header"><button class="close" data-dismiss="modal" aria-hidden="true">&times;</button> <h2 class="modal-title text-success">REUSSITE <i class="fa fa-archive" style=""></i></h2></div>
+            <div class="modal-body bg-dark text-center">
+                <div class="row">
+                    <small>Recupérer les images dans le fichier zip <i class="fa fa-archive"></i> télécharger.</small>
+                    <p class="mt-4 text-primary">QUE SOUHAITEZ VOUS FAIRE DU FICHIER ZIP ?</p>
+                    <div class="row mt-4">
+                       
+                            <div class="col-xs-10 col-xs-offset-2">
+                                <div class="col-xs-5">
+                                    <a class="btn btn-primary btn-block" href="#">Partager&nbsp;<i class="fa fa-share"></i></a>
+                                </div>
+                                <div class="col-xs-5">
+                                    <a class="btn btn-danger btn-block" href="#">Envoyer&nbsp;<i class="fa fa-send"></i></a>
+                                </div>
+                            </div>
+                     
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button> <a href="@Url.Action("Index")" class=" btn btn-success">Redimensionnez d'autres ? <i class="fa fa-recycle"></i></a></div>
+        </div>
+    </div>
+    
+</div>
+
 }
 
 
 @section scripts{
 
 <script type="text/javascript">
+    $('#successModal').modal('hide');
+    //$('#successModal').hide();
+    $('#successModal').on('toggle', function () {
+        console.log("TOGGLED");
+    });
 
     
-
     
 
 </script>
@@ -143,6 +177,19 @@
     let checkedBoxes=new Array();
     let NetworksCompleted = 0;
     $(document).ready(function () {
+
+        function OnCompleteResize(data) {
+            console.log(data);
+            $('#Network_Next').attr('disabled', 'disabled');
+            $('#successModal').modal('toggle');
+            console.log("OnCompleteResize called");
+        }
+        function OnCompleteResize() {
+            //console.log(data);
+            $('#Network_Next').attr('disabled', 'disabled');
+            $('#successModal').modal('toggle');
+            console.log("OnCompleteResize without data called");
+        }
         //at first just the social header is seen
         $('[name="header_profile"]').hide();
 
@@ -247,18 +294,27 @@
         });
 
 
-        $('#Btn_Next').on('click', function () {
-            //hide social network selection
-            $('[name="social_checkbox"]').hide();
-            $('[name="header_socialNetwork"]').hide();      //header
+        $('#submit_Btn').on('click', function () {
+            console.log("SUBMIT BUTTON CLICKED !");
+            OnCompleteResize();
+        });
 
-            //show profiles 
-            console.log(checkedBoxes);
-            console.log(NetworksCompleted);
-            $('#Btn_Return').hide();
-            $(this).hide();
-            SwapProfileSelection(checkedBoxes, NetworksCompleted, "profiles");
-            
+
+        $('#Btn_Next').on('click', function () {
+            let state = $(this).attr('disabled');
+            console.log(state);
+            if (state !== 'disabled') {
+                //hide social network selection
+                $('[name="social_checkbox"]').hide();
+                $('[name="header_socialNetwork"]').hide();      //header
+
+                //show profiles 
+                console.log(checkedBoxes);
+                console.log(NetworksCompleted);
+                $('#Btn_Return').hide();
+                $(this).hide();
+                SwapProfileSelection(checkedBoxes, NetworksCompleted, "profiles");
+            } 
         });
 
 
@@ -290,19 +346,25 @@
 
 
         $('#Network_Next').on('click', function () {
-            console.log(checkedBoxes.length);
-            console.log(NetworksCompleted);
-            if (NetworksCompleted === checkedBoxes.length-1) {
-                //send request for resized images
-                console.log("SEND DATA");
-                $('#submit_Btn').click();
-                //alert("SENDING DATA");
+            let state = $(this).attr('disabled');
+            console.log(state);
+            if (state!=='disabled') {
+                console.log("In IF");
+                //console.log(checkedBoxes.length);
+                //console.log(NetworksCompleted);
+                if (NetworksCompleted === checkedBoxes.length - 1) {
+                    //send request for resized images
+                    //console.log("SEND DATA");
+                    $('#submit_Btn').click();
+                    //alert("SENDING DATA");
+                }
+                else {
+                    //add the number of completed networks 
+                    NetworksCompleted = NetworksCompleted + 1;
+                    SwapProfileSelection(checkedBoxes, NetworksCompleted, "profiles");
+                }
             }
-            else {
-                //add the number of completed networks 
-                NetworksCompleted = NetworksCompleted + 1;
-                SwapProfileSelection(checkedBoxes, NetworksCompleted, "profiles");
-            }
+            
         });
 
 

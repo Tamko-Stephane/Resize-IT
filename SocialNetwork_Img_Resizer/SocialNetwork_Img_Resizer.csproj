@@ -150,7 +150,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\FileConversionMethods.cs" />
     <Compile Include="Helpers\ResizingMethods.cs" />
+    <Compile Include="Helpers\Utility.cs" />
     <Compile Include="Migrations\202004160346071_InitialMigration.cs" />
     <Compile Include="Migrations\202004160346071_InitialMigration.designer.cs">
       <DependentUpon>202004160346071_InitialMigration.cs</DependentUpon>
@@ -171,8 +173,17 @@
     <Compile Include="Migrations\202004200844053_Network_Image_Spec_ImageCDNSrc.designer.cs">
       <DependentUpon>202004200844053_Network_Image_Spec_ImageCDNSrc.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202004282206334_Table_Operations_Add.cs" />
+    <Compile Include="Migrations\202004282206334_Table_Operations_Add.designer.cs">
+      <DependentUpon>202004282206334_Table_Operations_Add.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202004290102100_Update_Table_Operations_Date_Height_Width.cs" />
+    <Compile Include="Migrations\202004290102100_Update_Table_Operations_Date_Height_Width.designer.cs">
+      <DependentUpon>202004290102100_Update_Table_Operations_Date_Height_Width.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Network_Image_Spec.cs" />
+    <Compile Include="Models\Operation.cs" />
     <Compile Include="Models\ResizerDbContext.cs" />
     <Compile Include="Models\Social_Network.cs" />
     <Compile Include="Models\UploadedIMGViewModel.cs" />
@@ -226,9 +237,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Files_Repo\" />
-    <Folder Include="Files_ToZip\" />
-    <Folder Include="File_Zip\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -258,6 +266,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202004200844053_Network_Image_Spec_ImageCDNSrc.resx">
       <DependentUpon>202004200844053_Network_Image_Spec_ImageCDNSrc.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004282206334_Table_Operations_Add.resx">
+      <DependentUpon>202004282206334_Table_Operations_Add.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004290102100_Update_Table_Operations_Date_Height_Width.resx">
+      <DependentUpon>202004290102100_Update_Table_Operations_Date_Height_Width.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

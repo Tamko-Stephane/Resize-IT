@@ -15,7 +15,7 @@ namespace SocialNetwork_Img_Resizer.Models
         public DbSet<Network_Image_Spec> Network_Image_Specs { get; set; }
         public DbSet<Operation> Operations { get; set; }
 
-        public ResizerDbContext() : base("MyDB")        //db5375457768354c28a4ceaba101160fd9
+        public ResizerDbContext() : base("db5375457768354c28a4ceaba101160fd9")        //db5375457768354c28a4ceaba101160fd9
         {
 
         }
